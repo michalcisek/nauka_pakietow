@@ -1,3 +1,5 @@
+# 1. Zaladowanie srodowiska i bibliotek --------------------------------------
+
 rm(list=ls())
 library(rvest)
 library(data.table)
@@ -11,6 +13,14 @@ if (file.exists("srodowisko_biblioteki.RData")==F){
   load("srodowisko_biblioteki.RData")
 }
 
+
+# 2. Deklaracja zmiennych startowych -----------------------------------------
+
+#liczba dni za ktore beda pobierane logi pobran bibliotek
+ldni<-2 #chcemy tylko za 2 ostatnie dni (duze pliki)
+
+
+# 3. Scrapowanie danych ------------------------------------------------------
 
 #scrapowanie listy bibliotek i ich krotkiego opisu
 web<-"https://cran.r-project.org/web/packages/available_packages_by_name.html"
@@ -29,10 +39,7 @@ biblioteki<-data.frame(biblioteka,opisy)
 rm(opisy,biblioteka)
 
 
-# Pobranie danych na temat pobran -----------------------------------------
-
-#ustawienie dni za ktorych maja byc pobrane dane
-ldni<-2 #chcemy tylko za 2 ostatnie dni (duze pliki)
+#ustawienie dni za ktorych maja byc pobrane logi
 wczoraj <- as.Date(Sys.Date()-0)
 start <- as.Date(wczoraj-ldni)
 sekw <- seq(start, wczoraj, by = 'day')
@@ -46,18 +53,18 @@ braki<-c()
 #pobranie logow pobrania bibliotek
 for (i in 1:length(sekw)) {
   tryCatch({download.file(url[i], paste0('CRANlogs/', sekw[i], '.csv.gz'))},
-              error=function(cond){
-                warning(paste("Nie ma danych dla:", sekw[i]))
-                braki[length(braki)+1]<<-i
-              })
+           error=function(cond){
+             warning(paste("Nie ma danych dla:", sekw[i]))
+             braki[length(braki)+1]<<-i
+           })
 }
 
 
 file_list <- list.files("CRANlogs", full.names=TRUE)
 #usuniecie plikow dla ktorych nie bylo danych
 if (length(braki)>0){
-    file.remove(file_list[braki])
-    file_list<<-file_list[-braki]
+  file.remove(file_list[braki])
+  file_list<<-file_list[-braki]
 }
 
 #wczytanie logow pobran
@@ -66,6 +73,9 @@ for (file in file_list) {
   logs[[file]] <- read.table(file, header = TRUE, sep = ",", quote = "\"",
                              dec = ".", fill = TRUE, comment.char = "", as.is=TRUE)
 }
+
+
+# 4. Agregacja danych i wylosowanie biblioteki -------------------------------
 
 #polaczenie plikow w jedna liste
 dat <- rbindlist(logs)
@@ -98,4 +108,15 @@ biblioteki$prob<-biblioteki$suma/sum(biblioteki$suma)
 
 #dodanie biblioteki do wektora
 wylosowane_biblioteki<-append(wylosowane_biblioteki,as.character(biblioteki[sample(seq(nrow(biblioteki)),1,prob=biblioteki$prob),1]))
+rm(biblioteki,d1)
+bib<-wylosowane_biblioteki[length(wylosowane_biblioteki)]
+print(bib)
+
+#pobranie opisu biblioteki
+download.file(paste("https://cran.r-project.org/web/packages/",bib,"/",bib,".pdf",sep="")
+              ,paste(bib,".pdf",sep=""),mode="wb")
+rm(bib)
+
+#zapis srodowiska
+save.image("srodowisko_biblioteki.RData")
 
