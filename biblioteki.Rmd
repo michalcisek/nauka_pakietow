@@ -45,6 +45,19 @@ Zwróć uwagę na dziwne wywowałenie tej funkcji.
 Należy też zauważyć, że ten sam output daje viridis_pal()(10) jak i viridis(10).
 
 # permute
+Do sprawdzania, czy rozkłady, z których pochodzą próby, są takie same, stosuje się rozma-
+ite testy statystyczne. Zawsze polegają one na obliczeniu pewnej funkcji, zwanej
+statystyką testową,  której  argumentem  są  zadane  próby.  Wynik  tej  funkcji  z  pomocą  tablic  (a  coraz
+częściej komputera) przekształca się na p-wartość, która porównana z założonym poziomem
+istotności pozwala nam stwierdzić istnienie lub brak przesłanek do podważenia prawdziwości
+hipotezy o równości rozkładów.
+
+Niestety  bardzo  często  (np.  w  przypadku  testu  t-Studenta)  ich  teoretyczne  podstawy
+wymagają dodatkowych założeń o porównywanych rozkładach (np. o normalności rozkładów).
+Bez tych założeń nie wiedzielibyśmy jaki jest rozkład statystki testowej, a więc i p-wartości
+uzyskane byłyby w sposób heurystyczny, bez dowodu, że są one poprawne. Niestety w praktyce
+nie zawsze można formalnie sprawdzić czy zachodzą wymagane założenia o rozkładach.
+
 Okazuje  się  jednak,  że  zamiast  wielu  testów  możemy  zastosować  odpowiadające  im  te-
 sty permutacyjne, które nie wymagają dodatkowych założeń o rozkładach porównywanych
 prób. Testy te opierają się na spostrzeżeniu, że jeżeli hipoteza zerowa o równości rozkładów
@@ -56,3 +69,5 @@ serwowanie prób ({0,2,0,29},{0,11,0,37}), czy też ({0,11,0,2},{0,29,0,37}).
 Powyższe spostrzeżenie pozwala znaleźć rozkład statystki testowej, na podstawie wartości
 uzyskanych przez tę funkcję przy różnych podziałach na próby. Dzięki temu możemy obliczyć
 p-wartość i dalej postępować tak, jak w przypadku innych testów statystycznych.
+
+
