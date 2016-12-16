@@ -70,4 +70,13 @@ Powyższe spostrzeżenie pozwala znaleźć rozkład statystki testowej, na podst
 uzyskanych przez tę funkcję przy różnych podziałach na próby. Dzięki temu możemy obliczyć
 p-wartość i dalej postępować tak, jak w przypadku innych testów statystycznych.
 
+Randomizacja jest to losowy dobór osób do badania. Losowość należy tutaj rozumieć, że każdy przypadek z badanej populacji ma taką samą szansę być uczestnikiem badania co każdy inny. Stosując odpowiednie metody losowania badacze "dają" szansę każdej osobie zpopulacji na bycie osobą badaną. 
+
+Powody stosowania randomizacji w badaniach to:
+
+1. zminimalizowanie wpływu zmiennych niekontrolowanych. Stosując losowość doboru osób do badania minimalizuje się wpływ niekontrolowanych czynników.
+
+2. odzwierciedlenie charakterystyki populacji (np. Polacy) w badanej próbie (np. 1000 osób)
+
+3. uprawdopodobnienie otrzymanych rezultatów badań
 
