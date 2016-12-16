@@ -1,0 +1,45 @@
+---
+title: "Biblioteki - notatki"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+# viridis
+Biblioteka w Pythonie *Matplotlib* wprowadziła ostatnio nowe standardy kolorów map - nazwane viridis, magma, inferno i plasma. Viridis stał się nową standardową mapą kolorów Matplotlibu. Mapy zostały tak zaprojektowane, że mogą być poprawnie postrzegane przez daltonistów, a także wydrukowane na biało-czarno.
+```{r, echo=TRUE}
+#install.packages("viridis")
+library(viridis)
+```
+Żeby użyć skali viridis w ggplot używamy scale_fill_viridis() albo scale_color_viridis(). Można także jako argument w tych funkcjach podać inną skalę wyżej wymienioną, np.: scale_fill_virdis(option="magma"). Może być także używana w przypadku zmiennej dyskretnej, np.: scale_color_viridis(discrete=T)
+```{r, echo=TRUE}
+#install.packages("hexbin")
+library(hexbin)
+library(ggplot2)
+ggplot(data.frame(x = rnorm(10000), y = rnorm(10000)), aes(x = x, y = y)) +
+  geom_hex() + coord_fixed() +
+  scale_fill_viridis() + theme_bw()
+```
+
+Funkcja viridis() generuje wektor kolorów z mapy kolorów virdis
+
+```{r}
+viridis(n=10, alpha=1, option="D")
+```
+
+option:
+
+* "A"="magma"
+* "B"="inferno"
+* "C"="plasma"
+* "D"="viridis"
+
+Fukcja viridis_pal() tworzy dyskretną paletę kolorów z viridis. Poniżej fajny kawałek kodu do wizualizacji wygenerowanych kolorów
+
+```{r}
+library(scales)
+show_col(viridis_pal()(10))
+```
+Zwróć uwagę na dziwne wywowałenie tej funkcji. 
+
+Należy też zauważyć, że ten sam output daje viridis_pal()(10) jak i viridis(10).
