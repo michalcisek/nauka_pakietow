@@ -80,3 +80,5 @@ Powody stosowania randomizacji w badaniach to:
 
 3. uprawdopodobnienie otrzymanych rezultatów badań
 
+A permutation-based test can be used to test the same Null hypothesis, but without some of the assumptions of the t test, most importantly the assumption that the data are a random sample from the population of golden jackals. With a permutation test, we are free to choose any suitable test statistic
+
