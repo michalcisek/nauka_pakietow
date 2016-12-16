@@ -43,3 +43,16 @@ show_col(viridis_pal()(10))
 Zwróć uwagę na dziwne wywowałenie tej funkcji. 
 
 Należy też zauważyć, że ten sam output daje viridis_pal()(10) jak i viridis(10).
+
+# permute
+Okazuje  się  jednak,  że  zamiast  wielu  testów  możemy  zastosować  odpowiadające  im  te-
+sty permutacyjne, które nie wymagają dodatkowych założeń o rozkładach porównywanych
+prób. Testy te opierają się na spostrzeżeniu, że jeżeli hipoteza zerowa o równości rozkładów
+jest prawdziwa, to zamiast naszych dwóch prób mogliśmy, z takim samym prawdopodobień-
+stwem, zobaczyć obserwacje o tych samych wartościach, ale innym podziałem na próby. Dla
+przykładu,  gdy  naszą  obserwacją  są  dwie  dwuelementowe  próby:  ({0,2,0,37},{0,11,0,29}),
+i zakładamy, że pochodzą z takich samych rozkładów, to równie prawdopodobne było zaob-
+serwowanie prób ({0,2,0,29},{0,11,0,37}), czy też ({0,11,0,2},{0,29,0,37}).
+Powyższe spostrzeżenie pozwala znaleźć rozkład statystki testowej, na podstawie wartości
+uzyskanych przez tę funkcję przy różnych podziałach na próby. Dzięki temu możemy obliczyć
+p-wartość i dalej postępować tak, jak w przypadku innych testów statystycznych.
