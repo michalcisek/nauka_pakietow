@@ -45,11 +45,7 @@ Zwróć uwagę na dziwne wywowałenie tej funkcji.
 Należy też zauważyć, że ten sam output daje viridis_pal()(10) jak i viridis(10).
 
 # permute
-Do sprawdzania, czy rozkłady, z których pochodzą próby, są takie same, stosuje się rozma-
-ite testy statystyczne. Zawsze polegają one na obliczeniu pewnej funkcji, zwanej
-statystyką testową,  której  argumentem  są  zadane  próby.  Wynik  tej  funkcji  z  pomocą  tablic  (a  coraz
-częściej komputera) przekształca się na p-wartość, która porównana z założonym poziomem
-istotności pozwala nam stwierdzić istnienie lub brak przesłanek do podważenia prawdziwości
+Do sprawdzania, czy rozkłady, z których pochodzą próby, są takie same, stosuje się rozmaite testy statystyczne. Zawsze polegają one na obliczeniu pewnej funkcji, zwanej statystyką testową,  której  argumentem  są  zadane  próby.  Wynik  tej  funkcji  z  pomocą  tablic  (a  corazcczęściej komputera) przekształca się na p-wartość, która porównana z założonym poziomem istotności pozwala nam stwierdzić istnienie lub brak przesłanek do podważenia prawdziwości
 hipotezy o równości rozkładów.
 
 Niestety  bardzo  często  (np.  w  przypadku  testu  t-Studenta)  ich  teoretyczne  podstawy
@@ -70,7 +66,7 @@ Powyższe spostrzeżenie pozwala znaleźć rozkład statystki testowej, na podst
 uzyskanych przez tę funkcję przy różnych podziałach na próby. Dzięki temu możemy obliczyć
 p-wartość i dalej postępować tak, jak w przypadku innych testów statystycznych.
 
-Randomizacja jest to losowy dobór osób do badania. Losowość należy tutaj rozumieć, że każdy przypadek z badanej populacji ma taką samą szansę być uczestnikiem badania co każdy inny. Stosując odpowiednie metody losowania badacze "dają" szansę każdej osobie zpopulacji na bycie osobą badaną. 
+**Randomizacja** jest to losowy dobór osób do badania. Losowość należy tutaj rozumieć, że każdy przypadek z badanej populacji ma taką samą szansę być uczestnikiem badania co każdy inny. Stosując odpowiednie metody losowania badacze "dają" szansę każdej osobie zpopulacji na bycie osobą badaną. 
 
 Powody stosowania randomizacji w badaniach to:
 
@@ -81,4 +77,131 @@ Powody stosowania randomizacji w badaniach to:
 3. uprawdopodobnienie otrzymanych rezultatów badań
 
 A permutation-based test can be used to test the same Null hypothesis, but without some of the assumptions of the t test, most importantly the assumption that the data are a random sample from the population of golden jackals. With a permutation test, we are free to choose any suitable test statistic
+
+
+Biblioteka permute pozwala na dokonywanie testów permutacyjnych. Najważniejsza funkcja to shuffle(), która jest jakby wrapem funkcji sample(). Dostępny jest argument *control*, w którym definiujemy jak mają być dokonane permutacje.
+
+```{r, results='asis'}
+library(permute)
+set.seed(2)
+shuffle(10)
+set.seed(2)
+sample(1:10,10,replace=F)
+```
+
+Przykład wykorzystania funkcji shuffle() do zbadania rowności średnich w dwóch grupach na podstawie zbioru dostępnego w bibliotece permute.
+
+```{r, results='asis'}
+Djackal <- numeric(length = 5000)
+data(jackal)
+N <- nrow(jackal)
+
+#funkcja do liczenia roznic srednich
+meanDif <- function(x, grp) {
+    mean(x[grp == "Male"]) - mean(x[grp == "Female"])
+}
+
+#dla roznych kombinacji liczy roznice srednich
+set.seed(42)
+for (i in seq_len(length(Djackal) - 1)) {
+   perm <- shuffle(N)
+   Djackal[i] <- with(jackal, meanDif(Length, Sex[perm]))
+}
+#ostatnim elementem jest zaobserwowana na zbiorze roznica srednich
+Djackal[5000] <- with(jackal, meanDif(Length, Sex))
+
+#ile roznic jest wiekszych niz zaobserwowana
+Dbig <- sum(Djackal >= Djackal[5000])
+# p-value
+Dbig/length(Djackal)
+
+
+```
+
+
+
+allPerms() dokonuje wszystkich możliwych permutacji.
+```{r,results='asis'}
+wektor<-c(1,2,3)
+allPerms(wektor)
+allPerms(3)
+```
+
+numPerms() zwraca liczbę możliwych permutacji na danym obiekcie.
+
+# foreach
+
+Biblioteka foreach umożliwia nową konstrukcje pętli for, pozwalając na obliczenia równoległe (*parallel computing*)
+
+operator %do% wykonuje obliczenia sekwencyjnie
+operator %dopar% używa obecnie zarejestrowanego backendu (wykonuje obliczenia równolegle)
+
+verbose(ang.) - rozwlekły
+
+funkcja foreach() i operatory %do/%dopar są konstrukcjami pętli, które mogą być postrzegane jako hybryda pomiędzy pętlą for a funkcją lapply() - wygląda podobnie do pętli for, a dokonuje ewaluacji bardziej jak funkcja (tak jak lapply()). Ich celem jest raczej zwracanie wartości (listy defaultowo) niż powodowanie jakiś efektów ubocznych.
+
+Obliczenia równoległe zależą od *parallel backend*, który musi być zarejestrowany przed uruchomieniem. Przykładowe biblioteki z różnymi backendami: **parallel**, **multicore**, **snow**.
+
+Funkcja times() jest funkcją ułatwiającą użycie foreach(). Użyteczna do ewaluacji wyrażenia wielokrotnie razy kiedy nie ma zmieniających się argumentów
+```{r}
+library(foreach)
+times(3) %do% rnorm(1)
+#ekwiwalent do wywołania rnorm(3)
+```
+
+getDoParWorkers() - zwraca liczbę zarejestrowanych wątków w backendzie
+getDoParRegistered() - zwraca zmienną binarną w zależności od tego czy backend został zarejestrowany
+
+Argumenty funkcji foreach():
+* .combine - do łączenia wyników. Jeśli użyjemy 'c' to wyniki zostaną połączone w wektor, 'cbind' i 'rbind' połączą wektowy w macierz. Wartości '+' i '\*' mogą być używany w celu agregacji danych numerycznych. Uważać na liczbę maksymalnych argumentów jakie przyjmuje foreach() w przypadku własnych funkcji (można zmieniać za pomocą .multicombine i .maxcobine)
+
+Warto zwrócić uwagę na bibliotekę **iterators**.
+
+Przykład: użycie do budowy lasu losowego
+```{r}
+x<-matrix(runif(500),100)
+y<-gl(2,50)
+library(randomForest)
+rf <- foreach(ntree=rep(250, 4), .combine=combine) %do%
+randomForest(x, y, ntree=ntree)
+rf
+
+#jesli bysmy chcieli odpalić żeby liczyło równolegle to najpierw musimy zarejestrować backend, a potem:
+# rf <- foreach(ntree=rep(250, 4), .combine=combine, .packages='randomForest') %dopar%
+# randomForest(x, y, ntree=ntree)
+# rf
+
+```
+Zwróć uwagę, że żeby liczyło się równolegle to musimy w foreach() załączyć bibliotekę **randomForest**
+
+operator %:% jest zagnieżdżonym operatorem używanym do tworzenia zagnieżdżonych pętli foreach. Operuje na dwóch obiektach foreach. Kiedy przydatne? Kiedy standardowo mamy pętle w pętli. W takim przypadki tego operatora używamy na zewnętrznej pętli. Nie jest to jednak takie oczywiste. Przykładowo jeśli zewnętrzna pętla zawiera mało iteracji może powodować problemy, a użycie na wewnętrznej pętli może nie być efektywne.
+Bibliotek **doNWS** wspiera tzw *chunking tasks* - użyteczne jeśli zadania są dosyć małe i dzięki temu możemy chcieć żeby zewnętrzna pętla była uruchumiona jako pojedyńcze zadanie. chunkSize definiujemy f argumencie .options.nws funkcji foreach(). Podsumowując, używając operatora %:% możemy konwertować for pętle na zagnieżdzoną pętle foreach. Użyj %dopar% żeby obliczenia wykonywały się równolegle i ustaw opcję chunkSize tak żeby te chunki były dostatecznie duże żeby wykonywały się efektywnie, ale nie za duże tak żeby nie powodowały *load balancing problems*. Nie trzeba się koniec końców martwić o to którą pętle paralelyzować ponieważ używając operatora zmieniasz zagnieżdzone pętle w pojedyńczy stream zadań, które mogą liczone parallelnie z użyciem backendu. 
+
+
+
+Ciekawą funkcją jest również when(), która może powstrzymać niepotrzebne ewaluacje:
+```{r}
+library(iterators)
+x <- foreach(a=irnorm(1, count=10), .combine='c') %:% when(a >= 0) %do% sqrt(a)
+x
+```
+
+# polyclip
+
+polygon(ang.)- wielokąt
+
+Biblioteka umożliwia dokonywanie operacji geometrycznych na wielokątach (np. suma, różnica itd.)
+
+```{r}
+library(polyclip)
+
+A <- list(list(x=1:10, y=c(1:5,5:1)))
+B <- list(list(x=c(2,8,8,2),y=c(0,0,10,10)))
+plot(c(0,10),c(0,10), type="n", axes=FALSE, xlab="", ylab="")
+polygon(A[[1]])
+polygon(B[[1]])
+C <- polyclip(A, B,op = "intersection")
+polygon(C[[1]], lwd=3, col=3)
+```
+
 
