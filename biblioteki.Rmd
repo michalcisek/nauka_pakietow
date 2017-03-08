@@ -236,9 +236,40 @@ Biblioteka zawierająca różne zbiory danych zawartych w książce 'Data Analys
 
 
 
+# Boruta
 
+* redundant - zbędny
+* discernible - zauważalny, dostrzegalny
+* to deem - uznawać, wierzyć, sądzić
+* to shuffle - przestawić, potasować
+* tentative - niepewny
 
+Pakiet służący do wyboru zmiennych objaśniających do modelu. Algorytm został obudowany wokół alorytmu lasu losowych. 
+Boruta jest algorytmem selekcji wszystkich istotnych zmiennych objaśniających. Nie identyfikuje istotności zmiennej na podstawie dokładności klasyfikacji.
 
+Trzeba pamiętać, że spadek dokładności klasyfikacji po odrzuceniu zmiennej jest wystarczający, żeby stwierdzić że jest istotna, ale brak spadku (wzrost) nie jest wystarczający żeby powiedzieć że jest nieistotna.
+
+W Borucie istotność zmiennej jest definiowane przez porónwnanie istotności prawdziwych zmiennych do tych z przetasowanymi obserwacjami.
+
+In a wrapper method the classifier is used as a black box returning a feature ranking.
+Random forest is an ensemble method in which classification is performed by voting of multiple unbiased weak classifiers - decision trees.
+
+**minimal optimal problem** - selection of the small (posibly minimal) feature set giving best possible classification results.
+
+**all-relevant problem** - identification of all attributes which are in some circumstances relevant for classification. Crucial for understanding mechanisms related to the subject of interest. Ten problem rozwiązuje Boruta.
+
+Możemy ustawić ręcznie argumenty mtry i ntree tam gdzie błąd OOB się stabilizuje ale domyślnie wyniki powinny być w porządku i bez tego.
+
+**Argumenty:**
+
+* doTrace=2 - wydruk będzie bardziej szczegółowy
+* maxRuns - ile razy algorytm lasów losowych ma być odpalany. Jeśli po użyciu Boruty wychodzą nam zmienne tentative (niepewne), to należy zwiększyć ten parametr
+
+**TentativeRoughFix()** - jeśli zmienne wychodzą i tak niepewne (tentative) to możemy użyć tej funkcji (albo ręcznie ocenić czy jest istotna czy nie). Porównuje mediany Z-score dla zmiennej oryginalnej i przetasowanej.
+
+**getConfirmedFormula()**, **getNonRejectedFormula()** - wyciąga postać modelu, którą możemy użyć do klasyfikatorów
+
+**attStats()** - Z-score dla zmiennych podczas działania kolejnych lasów losowych. Pokazuje też w ilu przypadkach wyższy niż MZSA (maximum Z-score among shadow attributes)
 
 
 
