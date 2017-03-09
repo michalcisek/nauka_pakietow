@@ -272,10 +272,63 @@ Możemy ustawić ręcznie argumenty mtry i ntree tam gdzie błąd OOB się stabi
 **attStats()** - Z-score dla zmiennych podczas działania kolejnych lasów losowych. Pokazuje też w ilu przypadkach wyższy niż MZSA (maximum Z-score among shadow attributes)
 
 
+# caret
+
+prevalent - dominujący, przeważający
+granularity - szczegółowość, dokładność
+
+caret - classification and regression training
+
+train() - funkcja między innymi do tunowania algorytmów machine learning.
+
+createDataPartition() - dokonuje podziału zbioru na treningowy i testowy. Potrzebne określenie zmiennej objaśnianej jako y, oraz podanie ile procent danych wejdzie do zbioru treningowego (argument p). Zwraca wektor wierszy wybranych do zbioru testowego.
+
+confusionMatrix() - tworzy tablicę pomyłek dla zbudowanego modelu.
+
+featurePlot() - do wizualizacji danych w postaci grafik lattice. Argument plot definiuje typ wykresu wygenerowanego.
+
+
+predictor is called 'near zero-variance' when some category in this variable has very low frequencies.
+
+nearZeroVar() - funkcja do wykrywania zmiennych z prawie zerową wariancją (near zero-variance). Argument saveMetrics=T pokazuje więcej info na temat zmiennych. Kolumna freqRatio pokazuje stosunek najbardziej licznej kategorii do drugiej najbardziej licznej. Kolumna percentUnique pokazuje liczbę unikalnych wartości podzieloną przez całkowitą liczbę obserwacji razy 100. Funkcja zwróci domyślnie problematyczne zmienne.
+
+findCorrelation() - wyszukuje zmienne silnie skorelowane ze sobą. Argument cutoff definiuje punkt odcięcia powyżej którego zmienne zostają uznane za skorelowane ze sobą.
+
+findLinearCombos() - bada czy występuje problem zależności liniowej między zmiennymi.
+
+preProcess() - stosuje różne metody transformacji zmiennych, np. centrowanie czy skalowanie. Rodzaj transformacji definiujemy w argumencie method. Trzeba pamiętać że ta funkcja nie dokonuje od razu transformacji danych. Dopiero wtedy gdy ją odpalimy i wynik użyjemy na obciążonej funkcji predict. method="nzv" - szuka zmiennych near zero-variance.
+
+**spatial sign transformation**
+If a model is considered to be sensitive to outliers, one data transformation that can minimize the problem is the spatial sign (Serneels et al. 2006). This procedure projects the predictor values onto a multidimensional sphere. This has the effect of making all the samples the same distance from the center of the sphere. Essentially, a vector of data is divided by its norm.
+
+```{r}
+library(AppliedPredictiveModeling)
+library(caret)
+transparentTheme(trans = .4)
+
+plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")])) 
+xyplot(nC ~ X4v,
+       data = plotSubset,
+       groups = mdrrClass, 
+       auto.key = list(columns = 2))  
+
+```
+
+```{r}
+# po transformacji "spatial sign"
+transformed <- spatialSign(plotSubset)
+transformed <- as.data.frame(transformed)
+xyplot(nC ~ X4v, 
+       data = transformed, 
+       groups = mdrrClass, 
+       auto.key = list(columns = 2)) 
+
+```
 
 
 
 
+ROZKMINIĆ JAK DZIAŁA CLASS DISTANCE CALCULATIONS, ODLEGLOSC MAHALANOBISA I LDA
 
 
 
