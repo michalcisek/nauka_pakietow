@@ -1,7 +1,9 @@
 ---
 title: "Biblioteki - notatki"
 output:
-  html_notebook: default
+  html_notebook: 
+    toc: true
+    theme: united
   pdf_document: default
 ---
 
@@ -334,14 +336,23 @@ ROZKMINIĆ JAK DZIAŁA CLASS DISTANCE CALCULATIONS, ODLEGLOSC MAHALANOBISA I LDA
 
 
 
+# dplyr
+
+tbl_df() - wrapper wokół ramki danych, przydatny w pracy z dużymi zbiorami danych. Nie wydrukuje przypadkowo danych do konsoli.
 
 
+filter() - wybiera subset wierszy z ramki. Pierwszym argumentem ramka, nastepnymi wyrażenia filtrujące.
+slice() - tnie ramkę po wybranych numerach wierszy.
+arrange() - order by na ramce. Można definiować wiele kolumn, a jak chcemy malejąco to stosujemy desc().
+select() - wybiera subset kolumn z ramki. Można stosować wyrażenia takie jak: kol1:kol7 albo -(kol1:kol7). Także warto stosować takie funkcje w argumentach jak: starts_with(), ends_with(), matches(), contains().
+rename() - zmienia nazwę kolumny.
+distinct() - do wyszukiwania unikalnych wartości w kolumnie/kolumnach. Podobne do unique() ale powinno być szybsze.
+mutate() - dodaje nowe kolumny jako przekształcenia już istniejących w tabeli. Działa podobnie do transform() z base'a i tak samo do funkcji z biblioteki plyr. 
+transmute() - Jeśli chcemy zostawić tylko nowe zmienne, które przekształciliśmy a stare wyrzucić.
+summarise() -  Takie samo działanie jak plyr::summarise().
+sample_n() - 
+sample_frac() - 
 
-
-
-
-
-k
 
 
 
