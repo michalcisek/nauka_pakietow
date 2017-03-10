@@ -276,6 +276,7 @@ Możemy ustawić ręcznie argumenty mtry i ntree tam gdzie błąd OOB się stabi
 
 prevalent - dominujący, przeważający
 granularity - szczegółowość, dokładność
+blueprint - plan, strategia
 
 caret - classification and regression training
 
@@ -340,7 +341,7 @@ ROZKMINIĆ JAK DZIAŁA CLASS DISTANCE CALCULATIONS, ODLEGLOSC MAHALANOBISA I LDA
 
 
 
-
+k
 
 
 
