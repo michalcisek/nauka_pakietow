@@ -282,24 +282,17 @@ blueprint - plan, strategia
 
 caret - classification and regression training
 
-train() - funkcja między innymi do tunowania algorytmów machine learning.
-
-createDataPartition() - dokonuje podziału zbioru na treningowy i testowy. Potrzebne określenie zmiennej objaśnianej jako y, oraz podanie ile procent danych wejdzie do zbioru treningowego (argument p). Zwraca wektor wierszy wybranych do zbioru testowego.
-
-confusionMatrix() - tworzy tablicę pomyłek dla zbudowanego modelu.
-
-featurePlot() - do wizualizacji danych w postaci grafik lattice. Argument plot definiuje typ wykresu wygenerowanego.
-
-
 predictor is called 'near zero-variance' when some category in this variable has very low frequencies.
 
-nearZeroVar() - funkcja do wykrywania zmiennych z prawie zerową wariancją (near zero-variance). Argument saveMetrics=T pokazuje więcej info na temat zmiennych. Kolumna freqRatio pokazuje stosunek najbardziej licznej kategorii do drugiej najbardziej licznej. Kolumna percentUnique pokazuje liczbę unikalnych wartości podzieloną przez całkowitą liczbę obserwacji razy 100. Funkcja zwróci domyślnie problematyczne zmienne.
 
-findCorrelation() - wyszukuje zmienne silnie skorelowane ze sobą. Argument cutoff definiuje punkt odcięcia powyżej którego zmienne zostają uznane za skorelowane ze sobą.
-
-findLinearCombos() - bada czy występuje problem zależności liniowej między zmiennymi.
-
-preProcess() - stosuje różne metody transformacji zmiennych, np. centrowanie czy skalowanie. Rodzaj transformacji definiujemy w argumencie method. Trzeba pamiętać że ta funkcja nie dokonuje od razu transformacji danych. Dopiero wtedy gdy ją odpalimy i wynik użyjemy na obciążonej funkcji predict. method="nzv" - szuka zmiennych near zero-variance.
+* train() - funkcja między innymi do tunowania algorytmów machine learning.
+* createDataPartition() - dokonuje podziału zbioru na treningowy i testowy. Potrzebne określenie zmiennej objaśnianej jako y, oraz podanie ile procent danych wejdzie do zbioru treningowego (argument p). Zwraca wektor wierszy wybranych do zbioru testowego.
+* confusionMatrix() - tworzy tablicę pomyłek dla zbudowanego modelu.
+* featurePlot() - do wizualizacji danych w postaci grafik lattice. Argument plot definiuje typ wykresu wygenerowanego.
+* nearZeroVar() - funkcja do wykrywania zmiennych z prawie zerową wariancją (near zero-variance). Argument saveMetrics=T pokazuje więcej info na temat zmiennych. Kolumna freqRatio pokazuje stosunek najbardziej licznej kategorii do drugiej najbardziej licznej. Kolumna percentUnique pokazuje liczbę unikalnych wartości podzieloną przez całkowitą liczbę obserwacji razy 100. Funkcja zwróci domyślnie problematyczne zmienne.
+* findCorrelation() - wyszukuje zmienne silnie skorelowane ze sobą. Argument cutoff definiuje punkt odcięcia powyżej którego zmienne zostają uznane za skorelowane ze sobą.
+* findLinearCombos() - bada czy występuje problem zależności liniowej między zmiennymi.
+* preProcess() - stosuje różne metody transformacji zmiennych, np. centrowanie czy skalowanie. Rodzaj transformacji definiujemy w argumencie method. Trzeba pamiętać że ta funkcja nie dokonuje od razu transformacji danych. Dopiero wtedy gdy ją odpalimy i wynik użyjemy na obciążonej funkcji predict. method="nzv" - szuka zmiennych near zero-variance.
 
 **spatial sign transformation**
 If a model is considered to be sensitive to outliers, one data transformation that can minimize the problem is the spatial sign (Serneels et al. 2006). This procedure projects the predictor values onto a multidimensional sphere. This has the effect of making all the samples the same distance from the center of the sphere. Essentially, a vector of data is divided by its norm.
@@ -338,24 +331,59 @@ ROZKMINIĆ JAK DZIAŁA CLASS DISTANCE CALCULATIONS, ODLEGLOSC MAHALANOBISA I LDA
 
 # dplyr
 
-tbl_df() - wrapper wokół ramki danych, przydatny w pracy z dużymi zbiorami danych. Nie wydrukuje przypadkowo danych do konsoli.
+remainder - pozostałość, reszta
 
+* tbl_df() - wrapper wokół ramki danych, przydatny w pracy z dużymi zbiorami danych. Nie wydrukuje przypadkowo danych do konsoli.
+* filter() - wybiera subset wierszy z ramki. Pierwszym argumentem ramka, nastepnymi wyrażenia filtrujące.
+* slice() - tnie ramkę po wybranych numerach wierszy.
+* arrange() - order by na ramce. Można definiować wiele kolumn, a jak chcemy malejąco to stosujemy desc().
+* select() - wybiera subset kolumn z ramki. Można stosować wyrażenia takie jak: kol1:kol7 albo -(kol1:kol7). Także warto stosować takie funkcje w argumentach jak: starts_with(), ends_with(), matches(), contains().
+* rename() - zmienia nazwę kolumny.
+* distinct() - do wyszukiwania unikalnych wartości w kolumnie/kolumnach. Podobne do unique() ale powinno być szybsze.
+* mutate() - dodaje nowe kolumny jako przekształcenia już istniejących w tabeli. Działa podobnie do transform() z base'a i tak samo do funkcji z biblioteki plyr. 
+* transmute() - Jeśli chcemy zostawić tylko nowe zmienne, które przekształciliśmy a stare wyrzucić.
+* summarise() -  Tworzy podsumowania jakiś kolumn. Takie samo działanie jak plyr::summarise().
+* sample_n() - losowanie n losowych wierszy z tabeli. N jest liczbą. Argument replace=T żeby stworzyć bootstrapową próbę.
+* sample_frac() - losowanie n losowych wierszy z tabeli. N jest ułamkiem. Argument replace=T żeby stworzyć bootstrapową próbę.
 
-filter() - wybiera subset wierszy z ramki. Pierwszym argumentem ramka, nastepnymi wyrażenia filtrujące.
-slice() - tnie ramkę po wybranych numerach wierszy.
-arrange() - order by na ramce. Można definiować wiele kolumn, a jak chcemy malejąco to stosujemy desc().
-select() - wybiera subset kolumn z ramki. Można stosować wyrażenia takie jak: kol1:kol7 albo -(kol1:kol7). Także warto stosować takie funkcje w argumentach jak: starts_with(), ends_with(), matches(), contains().
-rename() - zmienia nazwę kolumny.
-distinct() - do wyszukiwania unikalnych wartości w kolumnie/kolumnach. Podobne do unique() ale powinno być szybsze.
-mutate() - dodaje nowe kolumny jako przekształcenia już istniejących w tabeli. Działa podobnie do transform() z base'a i tak samo do funkcji z biblioteki plyr. 
-transmute() - Jeśli chcemy zostawić tylko nowe zmienne, które przekształciliśmy a stare wyrzucić.
-summarise() -  Takie samo działanie jak plyr::summarise().
-sample_n() - 
-sample_frac() - 
+```{r}
+#zad 1
+library(dplyr)
+df=data.frame(Theoph)
 
+#zad 2
+names(df)
 
+#zad 3
+select(df,Subject:Dose)
+select(df,Wt, Dose)
 
+#zad 4
+filter(df, Dose>5)
 
+#zad 5
+filter(df, Dose>5, Time>mean(Time))
+# filter(df, Dose>5 & Time>mean(Time))
+
+#zad 6
+arrange(df,desc(Wt))
+arrange(df,Wt)
+arrange(df,Wt,desc(Time))
+
+#zad 7
+mutate(df, trend = Time-mean(Time,na.rm=T))
+
+#zad 8
+df<-mutate(df, weight_cat = ifelse(Wt < 69.85 , "Welterweight",ifelse(Wt < 72.57 , "Light-middleweight",ifelse(Wt < 76.2  , "middleweight", ifelse(Wt>76.2, "Super-Middleweight", "Unknown")))))
+
+#zad 9
+weight_group <- group_by(df, weight_cat)
+
+#zad 10
+summarise(weight_group,
+          meanTime = mean(Time, na.rm = T),
+          sumDose = sum(Dose, na.rm = T))
+```
 
 
 
