@@ -496,13 +496,14 @@ mutate(players, career_year = yearID - min(yearID) + 1)
 ```
 
 
+
 Nie czytałem o strukturze funkcji okienkowych w SQL !!!
 
 
 
 # tidyr
 
-Biblioteka pomagająca w ogarnięciu nieuporządkowanych zbiorów danych (messy datasets)
+Biblioteka pomagająca w ogarnięciu nieuporządkowanych zbiorów danych (messy datasets). Często używana razem z biblioteką dplyr.
 
 Jakie wyróżniamy problemy w takich zbiorach danych?
 * Column headers are values, not variable names.
@@ -513,7 +514,73 @@ Jakie wyróżniamy problemy w takich zbiorach danych?
 
 implicit - domyślny, bezwarunkowy, ukryty
 explicit - jednoznaczny, jawny
+gather - zbierać, zebrać, zgarnąć
+spread - rozprzestrzeniać, rozprowadzać
 
-(messy data sets)
+```{r}
+library(tidyr)
+library(dplyr)
+head(mtcars)
+```
+
+```{r}
+mtcars$car <- rownames(mtcars)
+mtcars <- mtcars[, c(12, 1:11)]
+rownames(mtcars) <- 1:nrow(mtcars)
+```
+
+```{r}
+#zbiera wszystkie nazw zmiennych do zmiennej attribute i odpowiadajace im wartosci do value. Zostawia tylko car,
+#ktory bedzie replikowany
+mtcars %>%
+  gather(., attribute, value, -car) -> mtcarsNew
+head(mtcarsNew)
+```
+
+```{r}
+mtcars %>% 
+  gather(., attribute, value, mpg:gear) -> mtcarsNew
+head(mtcarsNew)
+```
+
+```{r}
+#za pomoca spread mozemy wrocic do oryginalnego ksztaltu
+mtcarsNew %>%
+  spread(., attribute, value)
+```
+
+```{r}
+set.seed(1)
+date <- as.Date('2016-01-01') + 0:14
+hour <- sample(1:24, 15)
+min <- sample(1:60, 15)
+second <- sample(1:60, 15)
+event <- sample(letters, 15)
+data <- data.frame(date, hour, min, second, event)
+data
+```
+
+```{r}
+#laczy kolumy date, hour, min i second w datetime
+dataNew <- data %>%
+  unite(., datehour, date, hour, sep = ' ') %>%
+  unite(., datetime, datehour, min, second, sep = ':')
+dataNew
+```
+
+```{r}
+#za pomoca separate wracamy do oryginalnego ksztaltu
+data1 <- dataNew %>% 
+  separate(datetime, c('date', 'time'), sep = ' ') %>% 
+  separate(time, c('hour', 'min', 'second'), sep = ':')
+data1
+```
+
+
+Funkcje:
+* gather() - konwertuje 'szeroką' ramkę danych na dłuższy format. Analogiczna do funkcji melt() z reshape2
+* spread() - odwrotnie do gather(). Analogiczna do funkcji cast() z reshape2
+* unite() - tworzy pojedynczą kolumnę z dwóch lub więcej
+* seperate() - dzieli jedną kolumnę na dwie lub więcej
 
 
