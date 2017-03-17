@@ -332,6 +332,8 @@ ROZKMINIĆ JAK DZIAŁA CLASS DISTANCE CALCULATIONS, ODLEGLOSC MAHALANOBISA I LDA
 # dplyr
 
 remainder - pozostałość, reszta
+coarse - toporny, szorstki
+
 
 * tbl_df() - wrapper wokół ramki danych, przydatny w pracy z dużymi zbiorami danych. Nie wydrukuje przypadkowo danych do konsoli.
 * filter() - wybiera subset wierszy z ramki. Pierwszym argumentem ramka, nastepnymi wyrażenia filtrujące.
@@ -346,46 +348,172 @@ remainder - pozostałość, reszta
 * sample_n() - losowanie n losowych wierszy z tabeli. N jest liczbą. Argument replace=T żeby stworzyć bootstrapową próbę.
 * sample_frac() - losowanie n losowych wierszy z tabeli. N jest ułamkiem. Argument replace=T żeby stworzyć bootstrapową próbę.
 
-```{r}
+```{r, include=FALSE}
 #zad 1
 library(dplyr)
 df=data.frame(Theoph)
+```
 
+```{r}
 #zad 2
 names(df)
+```
 
+```{r}
 #zad 3
 select(df,Subject:Dose)
-select(df,Wt, Dose)
+# select(df,Wt, Dose)
+```
 
+```{r}
 #zad 4
 filter(df, Dose>5)
+```
 
+```{r}
 #zad 5
 filter(df, Dose>5, Time>mean(Time))
 # filter(df, Dose>5 & Time>mean(Time))
+```
 
+```{r}
 #zad 6
-arrange(df,desc(Wt))
-arrange(df,Wt)
+# arrange(df,desc(Wt))
+# arrange(df,Wt)
 arrange(df,Wt,desc(Time))
+```
 
+```{r}
 #zad 7
 mutate(df, trend = Time-mean(Time,na.rm=T))
+```
 
+```{r}
 #zad 8
 df<-mutate(df, weight_cat = ifelse(Wt < 69.85 , "Welterweight",ifelse(Wt < 72.57 , "Light-middleweight",ifelse(Wt < 76.2  , "middleweight", ifelse(Wt>76.2, "Super-Middleweight", "Unknown")))))
+```
 
+```{r}
 #zad 9
 weight_group <- group_by(df, weight_cat)
+```
 
+```{r}
 #zad 10
 summarise(weight_group,
           meanTime = mean(Time, na.rm = T),
           sumDose = sum(Dose, na.rm = T))
 ```
 
+## Funkcje okienkowe
 
 
+```{r}
+library(Lahman)
+batting <- select(tbl_df(Batting), playerID, yearID, teamID, G, AB:H) 
+batting <- arrange(batting, playerID, yearID, teamID)
+players <- group_by(batting, playerID)
+```
+
+```{r}
+# For each player, find the two years with most hits
+filter(players, min_rank(desc(H)) <= 2 & H > 0)
+```
+
+```{r}
+# Within each player, rank each year by the number of games played
+mutate(players, G_rank = min_rank(G))
+```
+
+```{r}
+# For each player, find every year that was better than the previous year
+filter(players, G > lag(G))
+```
+
+```{r}
+# For each player, compute avg change in games played per year
+mutate(players, G_change = (G - lag(G)) / (yearID - lag(yearID)))
+```
+
+```{r}
+# For each player, find all where they played more games than average
+filter(players, G > mean(G))
+```
+
+```{r}
+# For each, player compute a z score based on number of games played
+mutate(players, G_z = (G - mean(G)) / sd(G))
+```
+
+```{r}
+#pokaz tylko 2 najlepsze lata pod wzgledem ilosci wystepow
+filter(players, min_rank(desc(G)) <= 2)
+```
+
+```{r}
+#ile srednio wystepowali pilkarze w podziale na 4 grupy
+by_team_player <- group_by(batting, teamID, playerID)
+by_team <- summarise(by_team_player, G = sum(G))
+by_team_quartile <- group_by(by_team, quartile = ntile(G, 4))
+summarise(by_team_quartile, mean(G))
+```
+
+```{r}
+#roznica miedzy kolejnymi rozegranymi meczami
+mutate(players, G_delta = G - lag(G))
+```
+
+```{r}
+#tylko zawodnicy ktorzy zmienili team
+filter(players, teamID != lag(teamID))
+```
+
+```{r}
+#pamietac przy funkcjach agregujacych o odpowiedniej kolejnosci wierszy(order_by)
+df <- data.frame(year = 2000:2005, value = (0:5) ^ 2)
+scrambled <- df[sample(nrow(df)), ]
+
+wrong <- mutate(scrambled, running = cumsum(value))
+arrange(wrong, year)
+
+right <- mutate(scrambled, running = order_by(year, cumsum(value)))
+arrange(right, year)
+```
+
+```{r}
+#zawodnicy ktorzy chociaz w jednym sezonie mieli powyzej 150 wystepow
+filter(players, cumany(G > 150))
+```
+
+```{r}
+#sezony zawodnikow z meczami powyzej 150
+filter(players, cumall(G > 150))
+```
+
+```{r}
+#ile lat w klubie wiersz po wierszu
+mutate(players, career_year = yearID - min(yearID) + 1)
+```
+
+
+Nie czytałem o strukturze funkcji okienkowych w SQL !!!
+
+
+
+# tidyr
+
+Biblioteka pomagająca w ogarnięciu nieuporządkowanych zbiorów danych (messy datasets)
+
+Jakie wyróżniamy problemy w takich zbiorach danych?
+* Column headers are values, not variable names.
+* Multiple variables are stored in one column.
+* Variables are stored in both rows and columns.
+* Multiple types of observational units are stored in the same table.
+* A single observational unit is stored in multiple tables.
+
+implicit - domyślny, bezwarunkowy, ukryty
+explicit - jednoznaczny, jawny
+
+(messy data sets)
 
 
