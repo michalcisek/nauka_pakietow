@@ -584,3 +584,100 @@ Funkcje:
 * seperate() - dzieli jedną kolumnę na dwie lub więcej
 
 
+# tibble
+
+Objekt tbl_df  jest ramką danych, która posiada lepszą metodę jej wyświetlania (szczególnie użyteczna gdy pracujemy z dużymi zbiorami danych). Klasa S3 tbl_df wrapuje lokalną ramkę danych. Głowną zaletą tibbles jest to, że drukują tylko pierwsze 10 wierszy i wszystkie kolumny, które mieszczą się na ekranie. Ponadto ewaluują swoje argumenty leniwie (lazy evaluation), np.:
+
+```{r}
+tibble(x = 1:5, y = x ^ 2)
+```
+Podczas gdy w ramce danych to nie zadziała:
+```{r}
+data.frame(x = 1:5, y = x ^ 2)
+```
+
+Tibbles nie używa row.names(), ponieważ chce utrzymywać dane w spójny sposób.
+
+Ponadto bardziej efektywne jest przekształcenie jakiś danych (np. listy) do tibble niż do data.frame:
+```{r}
+l <- replicate(26, sample(100), simplify = FALSE)
+names(l) <- letters
+
+microbenchmark::microbenchmark(
+  as_tibble(l),
+  as.data.frame(l)
+)
+```
+as_tibble() działa to na zasadzie zastosowania do.call(cbind, lapply(x, data.frame))
+
+Różnice między tibbles a data frames:
+
+* drukowanie - drukując tibble wyświetlane jest tylko 10 pierwszych wierszy i wszystkie kolumny, które mieszczą się na ekranie. Można kontrolować te opcje poprzez: options(tibble.print_max = n, tibble.print_min = m). options(tibble.width = Inf) pokaże wszystkie kolumny, niezależnie od szerokości ekranu
+* subsetting - używając operatora '[' tibble zawsze zwraca tibble, w przeciwieństwie do ramki danych, która czasami może zwrócić wektor. Żeby wybrać pojedynczą kolumnę z tiblle należy użyć operatora '[[' albo \$. Także jeśli za pomocą operatora \$ wybieramy kolumnę, której tam nie ma to otrzymamy NULL, podczas gdy wykonując to na tibble otrzymamy dodatkowo ostrzeżenie.
+* tibble nie konwertuje też nigdy zmiennej string na factor, nie zmienia nazw zmiennych i nie tworzy nazw wierszy!
+
+
+Funkcje:
+
+* as_tibble() (alias as_data_frame()) - konwertuje ramkę danych do tibble (tbl_df). Jak wskazana powyżej as_tibble() jest dużo bardziej efektywne niż as.data.frame()
+* tibble() (alias data_frame) - tworzy tibble
+* add_column() - dodaje kolumnę do ramki danych (tibble)
+* add_row() - dodaje wiersz do ramki danych
+* enframe() - konwertuje wektor z nazwami albo listy na dwu-kolumnowe ramki danych.
+```{r}
+enframe(4:7)
+enframe(c(x=1, y=2, z=3))
+```
+* glimpse() - transponowana wersja print. Kolumny są wyświetlane jako wiersze. Działa podobnie jak funkcja str() użyta na ramce danych, ale stara się wyświetlić tak wiele danych jak możliwe.
+```{r}
+glimpse(mtcars)
+```
+* has_name(x, name) - sprawdza czy dana kolumna występuje w ramce danych
+* lst() - podobna funkcja do list(), z tym że tak jak tibble ewaluacja jest leniwa i automatycznie dodaje nazwy.
+```{r}
+lst(n=5, x=rnorm(n))
+```
+Podczas gdy:
+```{r}
+list(n=5, x=rnorm(n))
+```
+
+# microbenchmark
+
+Biblioteka do porównywania czasu wykonania różnych wyrażeń R.
+
+Funkcje:
+
+* autoplot() - rysuje z wykorzystaniem ggplot2 czasy wykonań na podstawie obiektu microbenchmark
+* boxplot() - rysuje boxplot na obiekcie microbenchmark
+* microbenchmark() - funkcja do porównywania czasów wykonania. Argumenty: times - ile razy wykonać dane wyrażenie, unit - w jakich jednostkach czasu drukować czasy wykonywania ("ms", "s" ..., domyślnie nanosekundy), control - order: kolejność wykonywania wyrażeń (domyślnie losowo "random", można też "inorder", wtedy wykonuje po kolei, albo "block" - wtedy wykonuje jako jeden blok), warmup: liczba startowych iteracji zanim będzie mierzony faktycznie czas wykonania (domyślnie ustawiony na 2)
+
+```{r}
+library(microbenchmark)
+library(ggplot2)
+
+tm <- microbenchmark(rchisq(100, 0),
+    rchisq(100, 1),
+    rchisq(100, 2),
+    rchisq(100, 3),
+    rchisq(100, 5), times=1000L)
+```
+
+```{r}
+print(tm)
+```
+
+```{r}
+summary(tm)
+```
+```{r}
+autoplot(tm)
+```
+
+```{r}
+boxplot(tm)
+```
+
+
+
+
