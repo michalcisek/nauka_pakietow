@@ -7,6 +7,45 @@ output:
   pdf_document: default
 ---
 
+# pojedyncze funkcje
+
+* utils::combn(x,m) - generuje wszystkie m-elementowe kombinacje ze zbioru x. Można też zdefiniować funkcję, która ma być użyta na każdej kombinacji
+* base::choose() - oblicza symbol Newtona ( n!/[(n-k)!*k!] )
+* graphics::curve() - do szybkiego narysowania przebiegu jakiejś funkcji 
+* base::regexpr() - wykonuje regularne wyrażenie na tekście. Pamiętać żeby ustawić perl=T, kiedy mamy regularne wyrażenie w PHP. Uważać też na slashe.
+* base::regmatches() - zwraca właściwy substring dla regularnego wyrażenia. Jako pierwszy argument dajemy tekst, na którym działamy, a jako drugi wynik funkcji np. regexpr() albo bezpośrednio odpalić funkcję.
+* Amelia::missmap() - graficzna wizualizacja brakujących wartości
+* plyr::ddply - do grupowania i operowania na grupach
+* base::range - zakres danego wektora (min-max)
+* base::suppressWarnings - żeby uniknąć wyświetlania ostrzeżeń przy wywołaniu funkcji
+* glmnet::glmnet - regularyzowana regresja logistyczna
+* boot::inv.logit - zwraca odwrotny logit
+* stats::optim - do optymalizacji
+* reshape::cast -pozwala na wskazanie kolumny określającej wiersze (po lewej stronie operatora ~) oraz kolumny (po prawej stronie ~) macierzy wynikowej
+* stats::cmdscale - wizualizacja danych na podstawie macierzy odległości
+* base::ordered() - wskazujemy, że dana zmienna jest zmienną nominalną na skali porządkowej. Drugi argument określa uporządkowaną skalę wartości
+* base::parse() - dokonuje konwersji ciągu znaków na interpretowalny kod R, który potem zostaje uruchomiony jeśli podamy do funkcji base::eval()
+* utils::stack() - pozwala na przekształcenie data frame'u w postać sterty (ang. stack). Czyli np. jak masz w 3 kolumnach wartosci dla trzech klas, to funkcja stack transformuje Ci tą ramke na dwu-kolumnowy data frame, gdzie pierwsza kolumna będzie zawierać te wartości, a druga nazwy klas
+* base::tapply() - wykonuje wielokrotnie zadaną funkcję na podzbiorach zdefiniowanych przez zmienną factor
+* base::attr() - służy do ustalania i zwracania wartości argumentów
+* base::expand.grid() - tworzy data frame ze wszystkich kombinacji wektorów podanych w argumentach
+* base::mapply() - wykonuje funkcje z wieloma argumentami
+* reshape::melt() - dokonuje "rozpuszczenia" data frame'u po zidentyfikowanych grupach w drugim argumencie
+* reshape::cast() - przekształca tabelę otrzymaną przez melt() zgodnie z formułą zapisaną za pomocą tyldy
+* locfit::locfit() - stosuje lokalną regresje logistyczną
+* grDevices::devAskNewPage() - przydatna funkcja przy uruchamianiu całego skryptu R generującego wiele wykresów
+* graphics::cdplot() - oblicza i rysuje prawdopodobieństwa a posteriori przy wykorzystaniu twierdzenia Bayesa
+* MASS::lm.ridge() - estymacja regresji grzbietową
+* lasso2::l1ce() - estymacja regresji Lasso
+* utils::write.table(macierz, ‘clipboard’, sep=’\t’) - do zapisania macierzy do schowka. można potem łatwo i ładnie ją wkleić np. do Excela
+* ggplot::aes_string() - jak definiujemy mapowanie w ggplot i chcemy podać zmienne (np. x i y) jako stringi
+* base::upper.tri() - zwraca “górny trójkąt” macierzy
+* deparse(substitute(objekt_R)) - zamienia objekt_R (np. ramkę danych) na jego nazwę, czyli ‘objekt_R’
+* Operator “not in” - !(wektor %in% wartości)
+
+
+
+
 # viridis
 Biblioteka w Pythonie *Matplotlib* wprowadziła ostatnio nowe standardy kolorów map - nazwane viridis, magma, inferno i plasma. Viridis stał się nową standardową mapą kolorów Matplotlibu. Mapy zostały tak zaprojektowane, że mogą być poprawnie postrzegane przez daltonistów, a także wydrukowane na biało-czarno.
 ```{r, echo=TRUE}
@@ -301,6 +340,7 @@ If a model is considered to be sensitive to outliers, one data transformation th
 library(AppliedPredictiveModeling)
 library(caret)
 transparentTheme(trans = .4)
+data(mdrr)
 
 plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")])) 
 xyplot(nC ~ X4v,
@@ -589,10 +629,11 @@ Funkcje:
 Objekt tbl_df  jest ramką danych, która posiada lepszą metodę jej wyświetlania (szczególnie użyteczna gdy pracujemy z dużymi zbiorami danych). Klasa S3 tbl_df wrapuje lokalną ramkę danych. Głowną zaletą tibbles jest to, że drukują tylko pierwsze 10 wierszy i wszystkie kolumny, które mieszczą się na ekranie. Ponadto ewaluują swoje argumenty leniwie (lazy evaluation), np.:
 
 ```{r}
+library(tibble)
 tibble(x = 1:5, y = x ^ 2)
 ```
 Podczas gdy w ramce danych to nie zadziała:
-```{r}
+```{r, eval=FALSE, include=FALSE}
 data.frame(x = 1:5, y = x ^ 2)
 ```
 
@@ -637,8 +678,8 @@ glimpse(mtcars)
 ```{r}
 lst(n=5, x=rnorm(n))
 ```
-Podczas gdy:
-```{r}
+Podczas gdy poniższy kod nie zadziała:
+```{r, eval=FALSE, include=FALSE}
 list(n=5, x=rnorm(n))
 ```
 
@@ -676,6 +717,47 @@ autoplot(tm)
 
 ```{r}
 boxplot(tm)
+```
+
+
+# docxtracrt
+
+Biblioteka przeznaczona do wyciągania tabel i komentarzy z plików Microsoft Word. Opiera się na XML-owej strukturze plików .doc i .docx, przez co nawigowanie i wyciąganie tych informacji staje się łatwe do zrobienia.
+
+
+Funkcje:
+
+* assign_colnames() - wskazuje który wiersz ma być użyty jako nazwy kolumn
+* docx_cmnt_count() - liczba komentarzy w pliku
+* docx_describe_cmnts() - zwraca informacje o komentarzach w pliku, np. ile dany autor udzielił komentarzy
+* docx_describe_tbls() - ta sama funkcja co powyżej, tylko w stosunku do tabel
+* docx_extract_all(), docx_extract_all_tbls() - pobiera wszystkie tabele z pliku
+* docx_extract_all_cmnts() - pobiera wszystkie komentarze z pliku
+* docx_extract_tbl() - pobiera konkretną tabele
+* docx_tbl_count() - podaje liczbe tabel w dokumencie
+* read_docx() - wczytuje plik Worda do R
+
+
+
+```{r, echo=T}
+library(docxtractr)
+real_world <- read_docx(system.file("examples/realworld.docx", package="docxtractr"))
+docx_tbl_count(real_world)
+```
+
+
+
+```{r, echo=T}
+# get all the tables
+tbls <- docx_extract_all_tbls(real_world)
+tbls[[1]]
+```
+
+
+
+```{r, echo=TRUE}
+# make table 1 better
+assign_colnames(tbls[[1]], 2)
 ```
 
 
