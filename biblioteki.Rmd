@@ -387,6 +387,7 @@ coarse - toporny, szorstki
 * summarise() -  Tworzy podsumowania jakiś kolumn. Takie samo działanie jak plyr::summarise().
 * sample_n() - losowanie n losowych wierszy z tabeli. N jest liczbą. Argument replace=T żeby stworzyć bootstrapową próbę.
 * sample_frac() - losowanie n losowych wierszy z tabeli. N jest ułamkiem. Argument replace=T żeby stworzyć bootstrapową próbę.
+* n() - zwraca liczbę obserwacji w danej grupie (przydatne np. przy  subsecie tylko takich poziomów zmiennych, których jest więcej niż przyjęty próg)
 
 ```{r, include=FALSE}
 #zad 1
@@ -761,5 +762,11 @@ assign_colnames(tbls[[1]], 2)
 ```
 
 
+# assertthat
 
-
+```{r}
+has_args(mean, "x")
+has_args(mean, "x", exact = TRUE)
+see_if(mean %has_args% "x")
+see_if(mean %has_args% "y")
+```
